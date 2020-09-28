@@ -1,0 +1,255 @@
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+/**
+ *
+ * @author seanmapanao
+ */
+//Class to act as a twitter database
+public class Tweet implements Comparable<Tweet> {
+
+    private String userID;
+    private Date date;
+    private String tweet;
+
+    public Tweet(String userID, String dateTime, String tweet)
+            throws ParseException {
+        setUserID(userID);
+        setTweet(tweet);
+        setDate(dateTime);
+    }
+
+    /**
+     * @return the userID
+     */
+    public String getUserID() {
+        return userID;
+    }
+
+    /**
+     * @param userID the userID to set
+     */
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
+
+    /**
+     * @return the date
+     */
+    public Date getDate() {
+        return date;
+    }
+
+    /**
+     * @param date the date to set
+     */
+    
+//This method takes in a string representation of a date and time
+    //(uses dd/MM/yyyy hh:mm:ss format)
+    //Converts string into a date object
+    public void setDate(String date) throws ParseException {
+        SimpleDateFormat sdt = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+        this.date = sdt.parse(date);
+    }
+
+    /**
+     * @return the tweet
+     */
+    public String getTweet() {
+        return tweet;
+    }
+
+    /**
+     * @param tweet the tweet to set
+     */
+    public void setTweet(String tweet) {
+        this.tweet = tweet;
+    }
+    
+    //Takes in an Object object and converts Object object into a Tweet object to 
+    //be used to compare.
+    @Override
+    public boolean equals(Object other) {
+        Tweet otherTweet = (Tweet) other;
+        return this.getTweet() == otherTweet.getTweet();
+    }
+    
+    //return -1,0 or 1 after comparing date-times.
+    @Override
+    public int compareTo(Tweet o) {
+        if (this.getDate() == null || o.getDate() == null) {
+            return 0;
+        } else {
+            return this.getDate().compareTo(o.getDate());
+        }
+    }
+    
+    //String representaion of tweet object
+    @Override
+    public String toString() {
+        return "\nUser ID: " + getUserID() + "\nDate Tweeted: " + getDate()
+                + "\nTweet: " + getTweet() + 
+                "\n---------------------------------------------------------";
+    }
+}
+
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+/**
+ *
+ * @author seanmapanao
+ */
+public class TweetDB {
+
+    private String comment;
+    private ArrayList<Tweet> tweets;
+
+    public TweetDB(String comment) {
+        setComment(comment);
+        tweets = new ArrayList<>();
+    }
+
+    /**
+     * @return the comment
+     */
+    public String getComment() {
+        return comment;
+    }
+
+    /**
+     * @param comment the comment to set
+     */
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    /**
+     * @return the tweets
+     */
+    public ArrayList<Tweet> getTweets() {
+        return tweets;
+    }
+
+    /**
+     * @param tweets the tweets to set
+     */
+    public void setTweets(ArrayList<Tweet> tweets) {
+        this.tweets = tweets;
+    }
+
+    public void addTweet(Tweet tweet) {
+        tweets.add(tweet);
+    }
+
+    public int getNumberOfTweets() {
+        return tweets.size();
+    }
+
+    public Tweet getTweet(int i) {
+        return tweets.get(i);
+    }
+    
+    //Sorts tweets based on date-time.
+    public ArrayList<Tweet> getSortedTweet() {
+        Collections.sort(tweets);
+        return tweets;
+    } 
+    
+    //takes a tweet object as a parameter and iterates through the arraylist
+    //to see if the tweet object is already in the array list.
+    public boolean isAlreadyStored(Tweet t) {
+        for (int i = 0; i < tweets.size(); i++) {
+            Tweet text = tweets.get(i);
+            if (text.equals(t) == true) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    //String representation of TwitterDB object
+    @Override
+    public String toString() {
+        return comment + ":\n" + tweets;
+    }
+}
+
+
+import java.text.ParseException;
+import java.util.Scanner;
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+/**
+ *
+ * @author seanmapanao
+ */
+public class TweetTest {
+
+    public static void main(String[] args) throws ParseException {
+        Scanner scan = new Scanner(System.in);
+        
+        TweetDB list = new TweetDB("Various tweets");
+        
+        //premade tweet objects to be added to array list - used to test sort and
+        //size methods.
+        Tweet tweet =  new Tweet("ABC", "23/03/2020 13:35:56", "This is a test3");
+        Tweet tweet2 = new Tweet("ABC", "12/01/2020 13:35:56", "This is a test2");
+        Tweet tweet3 = new Tweet("ABC", "12/03/2020 13:55:56", "This is a test1");
+        Tweet tweet4 = new Tweet("ABC", "15/04/2020 13:36:56", "Thiis is a test");
+        
+        //Tweet object with user inputted parameters.
+        System.out.println("Please Enter the Following Tweet Information.");
+        System.out.println("Enter User ID: ");
+        String userName = scan.nextLine();
+        System.out.println("Enter current date and time in dd/MM/yyyy hh:mm:ss"
+                + "format: ");
+        String date = scan.nextLine();
+        System.out.println("Enter Tweet: ");
+        String userTweet = scan.nextLine();
+        
+        Tweet tweet5 = new Tweet(userName,date,userTweet);
+        
+        //add tweets to array list.
+        list.addTweet(tweet);
+        list.addTweet(tweet2);
+        list.addTweet(tweet3);
+        list.addTweet(tweet4);
+        list.addTweet(tweet5);
+        
+        //print current list
+        System.out.println(list);
+        
+        //testing method to get array size
+        System.out.println("Number of tweets: " + list.getNumberOfTweets());
+        
+        //sort tweets by date-time
+        System.out.println("-----Sorted Tweet List -----");
+        System.out.println(list.getSortedTweet());
+        
+        //testing get tweet @ specified index method
+        System.out.println("Tweet at index 3: " + list.getTweet(3));
+        
+        //testing method that checks if tweet is already in array list.
+        System.out.println(list.isAlreadyStored(tweet2));
+    }
+}
+
